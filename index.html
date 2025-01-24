@@ -4,7 +4,7 @@
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
     <title>GOVOETENVIVO</title>
-    <script src='//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js'></script>
+    <script src='//ssl.p.jwpcdn.com/player/v/8.26.0/jwplayer.js'/>
     <script>jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";</script>
     <style>
         body, html {
@@ -29,9 +29,51 @@
     </style>  
 </head>
 <body>    
-    <b:section class='govoet' id='govoet'/>
-    <div id='player-container'/>
-    <div id='embed-container'/>
-    <script src="script.js"></script>
+<div id='player-container'/>
+<div id='embed-container'/>
+
+<script>
+(function() {
+    const path = window.location.pathname.split('/')[1];
+    const randomOption = [1,1, 1][Math.floor(Math.random() * 3)];
+    const embedUrl = `https://tarjetarojaenvivo.lat/player/${randomOption}/${path}`;
+    
+    // Configure JW Player with VAST
+    var playerInstance = jwplayer('player-container').setup({
+        width: '100%',
+        height: '100%',
+        advertising: {
+            client: 'vast',
+            tag: 'https://grounded-flight.com/demQF/z.dZGiNJvOZGGvUb/DeLm/9MufZUU/l/keP/TSYlwFMyzpUi4eN/DDEatDNUjWAtzYNpT/gp0xMbi/Z-sdaZWF1/p/d/Dq0DxI',
+            skipoffset: 8,
+            admessage: "The ad will end in xx seconds.",
+            cuetext: "Ad",
+            skipmessage: "Skip ad in xx seconds",
+            skiptext: "Skip",
+            vpaidmode: "enabled"
+        },
+        playlist: [{
+            sources: [{
+                file: 'https://t.m3u8',
+                type: 'application/x-mpegURL'
+            }]
+        }]
+    });
+
+    // After the ad finishes, remove player and display iframe
+    playerInstance.on('adComplete', function() {
+        document.getElementById('player-container').remove();
+        document.getElementById('embed-container').style.display = 'block';
+        document.getElementById('embed-container').innerHTML = `<iframe allowfullscreen='true' frameborder='0' sandbox='allow-same-origin allow-scripts allow-top-navigation' src='${embedUrl}'/>`;
+    });
+
+    // If the ad is skipped, remove player and display iframe
+    playerInstance.on('adSkipped', function() {
+        document.getElementById('player-container').remove();
+        document.getElementById('embed-container').style.display = 'block';
+        document.getElementById('embed-container').innerHTML = `<iframe allowfullscreen='true' frameborder='0' sandbox='allow-same-origin allow-scripts allow-top-navigation' src='${embedUrl}'/>`;
+    });
+})();
+</script>
 </body>
 </html>
